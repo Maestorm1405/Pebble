@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pebble Privacy Policy</title>
+<style>
+  /* always light, so it copies cleanly into Google Docs */
+  :root { --bg: #ffffff; --fg: #1c1c1e; --muted: #6e6e73; --card: #ffffff; color-scheme: light; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.6 "Segoe UI", system-ui, sans-serif; }
+  main { max-width: 720px; margin: 0 auto; padding: 48px 16px 64px; }
+  h1 { font-size: 32px; margin: 0 0 4px; }
+  h2 { font-size: 20px; margin: 32px 0 8px; }
+  .muted { color: var(--muted); }
+  .card { background: var(--card); border-radius: 14px; padding: 16px 20px; margin: 16px 0; }
+  li { margin: 4px 0; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Pebble Privacy Policy</h1>
+  <p class="muted">Last updated: October 14, 2026</p>
+
+  <div class="card"><strong>Summary:</strong> Pebble has no accounts, ads, analytics or tracking. Your clipboard, to-dos, files and notifications stay on your PC. Pebble contacts the internet only to get weather and song lyrics, and to measure your connection's ping during games.</div>
+
+  <h2>What stays on your PC</h2>
+  <ul>
+    <li><strong>Settings, to-do list, file shelf, teleprompter script, recent colors and launcher usage counts</strong> are saved in your Windows user folder (<code>%LOCALAPPDATA%\Pebble</code>). They never leave your computer.</li>
+    <li><strong>Clipboard history</strong> is kept in memory only while Pebble is running. It is never written to disk or sent anywhere.</li>
+    <li><strong>Notifications</strong> are read with your permission so they can be shown in the island. The recent list is kept in memory only and is cleared when Pebble closes.</li>
+    <li><strong>Downloads tidying</strong> moves files only within your own Downloads folder, and only when you turn it on.</li>
+    <li><strong>Error logs</strong> are written to <code>%LOCALAPPDATA%\Pebble\error.log</code> to help with troubleshooting. They are not uploaded.</li>
+  </ul>
+
+  <h2>What is sent over the internet</h2>
+  <ul>
+    <li><strong>Weather:</strong> your approximate location (from Windows location services, if you allow it) or the city you type is sent to <a href="https://open-meteo.com/">Open-Meteo</a> to get the forecast. Pebble does not store your location.</li>
+    <li><strong>Lyrics:</strong> the title, artist and length of the song you're playing are sent to <a href="https://lrclib.net/">LRCLIB</a> to find synced lyrics.</li>
+    <li><strong>Ping:</strong> during games, Pebble sends a standard network ping to Cloudflare's public address 1.1.1.1 to measure latency. No personal data is included.</li>
+    <li><strong>Web search:</strong> if you choose "Search the web" in the launcher, your search opens in your default browser.</li>
+  </ul>
+  <p>These services have their own privacy policies. Pebble sends them only what is described above.</p>
+
+  <h2>Permissions</h2>
+  <ul>
+    <li><strong>Location:</strong> optional, used only for local weather. You can deny it and type a city instead.</li>
+    <li><strong>Notifications:</strong> optional, used only to show notifications in the island. You can turn it off in Pebble's Settings or in Windows Settings.</li>
+  </ul>
+
+  <h2>Children</h2>
+  <p>Pebble does not knowingly collect personal information from anyone, including children.</p>
+
+  <h2>Changes</h2>
+  <p>If this policy changes, the updated version will be posted on this page with a new date.</p>
+
+  <h2>Contact</h2>
+  <p>Questions? Use the support contact on Pebble's Microsoft Store page.</p>
+</main>
+</body>
+</html>

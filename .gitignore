@@ -1,0 +1,14 @@
+# build output (recreated by `dotnet build` / tools\package.ps1)
+bin/
+obj/
+artifacts/
+
+# Microsoft packaging tools (downloaded separately, see README)
+tools/sdk-buildtools/
+
+# editor / OS clutter
+.vs/
+*.user
+*.suo
+.DS_Store
+Thumbs.db

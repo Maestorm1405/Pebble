@@ -1,0 +1,429 @@
+<Window x:Class="Pebble.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Pebble" WindowStyle="None" AllowsTransparency="True" Background="{x:Null}"
+        Topmost="True" ShowInTaskbar="False" ShowActivated="False" ResizeMode="NoResize"
+        Width="760" Height="320" UseLayoutRounding="True" FontFamily="Segoe UI Variable Text, Segoe UI"
+        TextOptions.TextFormattingMode="Display">
+  <Window.Resources>
+    <Style x:Key="IconBtn" TargetType="Button">
+      <Setter Property="Foreground" Value="#E5E5EA"/>
+      <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
+      <Setter Property="FontSize" Value="15"/>
+      <Setter Property="Width" Value="34"/>
+      <Setter Property="Height" Value="30"/>
+      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="Focusable" Value="False"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Border x:Name="bg" Background="Transparent" CornerRadius="9">
+              <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="bg" Property="Background" Value="#26FFFFFF"/></Trigger>
+              <Trigger Property="IsPressed" Value="True"><Setter TargetName="bg" Property="Background" Value="#40FFFFFF"/></Trigger>
+              <Trigger Property="Tag" Value="sel"><Setter TargetName="bg" Property="Background" Value="#33FFFFFF"/><Setter Property="Foreground" Value="White"/></Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+    <Style x:Key="PillBtn" TargetType="Button">
+      <Setter Property="Foreground" Value="White"/>
+      <Setter Property="Background" Value="#26FFFFFF"/>
+      <Setter Property="FontSize" Value="12"/>
+      <Setter Property="Padding" Value="12,5"/>
+      <Setter Property="Margin" Value="0,0,6,6"/>
+      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="Focusable" Value="False"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Border x:Name="bg" Background="{TemplateBinding Background}" CornerRadius="12" Padding="{TemplateBinding Padding}">
+              <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="bg" Property="Opacity" Value="0.8"/></Trigger>
+              <Trigger Property="IsPressed" Value="True"><Setter TargetName="bg" Property="Opacity" Value="0.6"/></Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+    <Style x:Key="ListBtn" TargetType="Button">
+      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="Focusable" Value="False"/>
+      <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Border x:Name="bg" Background="#14FFFFFF" CornerRadius="9" Padding="10,7" Margin="0,0,0,5">
+              <ContentPresenter/>
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="bg" Property="Background" Value="#2CFFFFFF"/></Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+    <Style TargetType="Rectangle" x:Key="EqBar">
+      <Setter Property="Width" Value="3"/>
+      <Setter Property="Height" Value="16"/>
+      <Setter Property="RadiusX" Value="1.5"/>
+      <Setter Property="RadiusY" Value="1.5"/>
+      <Setter Property="Margin" Value="1,0"/>
+      <Setter Property="Fill" Value="White"/>
+      <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+    </Style>
+  </Window.Resources>
+
+  <Grid>
+    <Border x:Name="Shadow" Background="Black" CornerRadius="0,0,18,18" HorizontalAlignment="Center" VerticalAlignment="Top" Opacity="0"
+            IsHitTestVisible="False"
+            Width="{Binding ActualWidth, ElementName=Island}" Height="{Binding ActualHeight, ElementName=Island}">
+      <Border.Effect><DropShadowEffect BlurRadius="32" ShadowDepth="6" Direction="270" Opacity="0.6"/></Border.Effect>
+    </Border>
+
+    <Border x:Name="Island" Background="Black" CornerRadius="0,0,18,18" Width="240" Height="36"
+            HorizontalAlignment="Center" VerticalAlignment="Top" AllowDrop="True" ClipToBounds="True">
+      <Grid>
+
+        <!-- Compact pill -->
+        <Grid x:Name="Compact" Margin="14,0">
+          <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+            <StackPanel x:Name="MiniTimerBox" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,12,0" Visibility="Collapsed">
+              <TextBlock x:Name="MiniTimerIcon" Text="&#xE916;" FontFamily="Segoe MDL2 Assets" FontSize="12" Foreground="#FF9F0A" VerticalAlignment="Center" Margin="0,1,5,0"/>
+              <TextBlock x:Name="MiniTimer" FontSize="14" FontWeight="SemiBold" Foreground="#FF9F0A" VerticalAlignment="Center"/>
+            </StackPanel>
+            <TextBlock x:Name="MiniClock" FontSize="16" FontWeight="SemiBold" Foreground="White" VerticalAlignment="Center"/>
+          </StackPanel>
+          <TextBlock x:Name="MiniLyric" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="236" FontSize="12.5" FontWeight="SemiBold"
+                     Foreground="#E5E5EA" TextTrimming="CharacterEllipsis" Visibility="Collapsed"/>
+          <StackPanel x:Name="GameMini" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Visibility="Collapsed" ToolTip="FPS from Windows' compositor · ping to 1.1.1.1">
+            <TextBlock Text="&#xE7FC;" FontFamily="Segoe MDL2 Assets" FontSize="15" Foreground="#30D158" VerticalAlignment="Center"/>
+            <TextBlock x:Name="GameFps" FontSize="14" FontWeight="SemiBold" Foreground="White" Margin="9,0,0,0" VerticalAlignment="Center"/>
+            <TextBlock Text="FPS" FontSize="10" Foreground="#8E8E93" Margin="3,2,0,0" VerticalAlignment="Center"/>
+            <Ellipse x:Name="PingDot" Width="6" Height="6" Fill="#30D158" Margin="12,0,0,0" VerticalAlignment="Center"/>
+            <TextBlock x:Name="GamePing" FontSize="14" FontWeight="SemiBold" Foreground="White" Margin="5,0,0,0" VerticalAlignment="Center"/>
+            <TextBlock Text="ms" FontSize="10" Foreground="#8E8E93" Margin="3,2,0,0" VerticalAlignment="Center"/>
+          </StackPanel>
+          <StackPanel x:Name="CompactLeft" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+            <Border x:Name="MiniArt" Width="22" Height="22" CornerRadius="6" VerticalAlignment="Center" Background="#2C2C2E" Opacity="0" Visibility="Collapsed"/>
+            <StackPanel x:Name="EqBars" Orientation="Horizontal" Height="16" Margin="7,0,0,0" Visibility="Collapsed">
+              <Rectangle x:Name="Eq1" Style="{StaticResource EqBar}"><Rectangle.RenderTransform><ScaleTransform ScaleY="0.3"/></Rectangle.RenderTransform></Rectangle>
+              <Rectangle x:Name="Eq2" Style="{StaticResource EqBar}"><Rectangle.RenderTransform><ScaleTransform ScaleY="0.3"/></Rectangle.RenderTransform></Rectangle>
+              <Rectangle x:Name="Eq3" Style="{StaticResource EqBar}"><Rectangle.RenderTransform><ScaleTransform ScaleY="0.3"/></Rectangle.RenderTransform></Rectangle>
+              <Rectangle x:Name="Eq4" Style="{StaticResource EqBar}"><Rectangle.RenderTransform><ScaleTransform ScaleY="0.3"/></Rectangle.RenderTransform></Rectangle>
+            </StackPanel>
+            <StackPanel x:Name="WeatherMini" Orientation="Horizontal" VerticalAlignment="Center" Visibility="Collapsed">
+              <TextBlock x:Name="WeatherMiniIcon" FontFamily="Segoe UI Emoji, Segoe UI Symbol" FontSize="14" VerticalAlignment="Center"/>
+              <TextBlock x:Name="WeatherMiniTemp" FontSize="13.5" FontWeight="SemiBold" Foreground="White" VerticalAlignment="Center" Margin="5,0,0,0"/>
+            </StackPanel>
+          </StackPanel>
+        </Grid>
+
+        <!-- HUD -->
+        <Grid x:Name="Hud" Width="336" Height="40" HorizontalAlignment="Center" VerticalAlignment="Top" Opacity="0" IsHitTestVisible="False">
+          <Grid.ColumnDefinitions><ColumnDefinition Width="34"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+          <TextBlock x:Name="HudIcon" FontFamily="Segoe MDL2 Assets" FontSize="16" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+          <Border x:Name="HudArt" Width="24" Height="24" CornerRadius="6" VerticalAlignment="Center" Visibility="Collapsed"/>
+          <TextBlock x:Name="HudText" Grid.Column="1" FontSize="13" FontWeight="SemiBold" Foreground="White" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Margin="4,0,8,0"/>
+          <Grid x:Name="HudBar" Grid.Column="2" Width="90" Height="5" VerticalAlignment="Center" Margin="0,0,4,0">
+            <Border Background="#3A3A3C" CornerRadius="2.5"/>
+            <Border x:Name="HudBarFill" Background="White" CornerRadius="2.5" HorizontalAlignment="Left" Width="0"/>
+          </Grid>
+        </Grid>
+
+        <!-- Notification -->
+        <Grid x:Name="Notify" Width="400" Height="62" HorizontalAlignment="Center" VerticalAlignment="Top" Opacity="0" IsHitTestVisible="False">
+          <Grid.ColumnDefinitions><ColumnDefinition Width="58"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+          <Border Width="36" Height="36" CornerRadius="9" Background="#2C2C2E" HorizontalAlignment="Center" VerticalAlignment="Center" ClipToBounds="True">
+            <Grid>
+              <TextBlock x:Name="NotifyGlyph" Text="&#xE7E7;" FontFamily="Segoe MDL2 Assets" FontSize="16" Foreground="#E5E5EA" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+              <Image x:Name="NotifyImg" Stretch="UniformToFill"/>
+            </Grid>
+          </Border>
+          <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,16,0">
+            <TextBlock x:Name="NotifyApp" FontSize="11" Foreground="#8E8E93" TextTrimming="CharacterEllipsis"/>
+            <TextBlock x:Name="NotifyTitle" FontSize="13.5" FontWeight="SemiBold" Foreground="White" TextTrimming="CharacterEllipsis"/>
+            <TextBlock x:Name="NotifyBody" FontSize="12" Foreground="#C7C7CC" TextTrimming="CharacterEllipsis"/>
+          </StackPanel>
+        </Grid>
+
+        <!-- Expanded -->
+        <Grid x:Name="Expanded" Width="618" Height="222" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,6,0,0" Opacity="0" IsHitTestVisible="False">
+          <Grid.RowDefinitions><RowDefinition Height="34"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+          <StackPanel Orientation="Horizontal">
+            <Button x:Name="TabMedia" Style="{StaticResource IconBtn}" Width="31" Content="&#xE8D6;" ToolTip="Now Playing"/>
+            <Button x:Name="TabTimer" Style="{StaticResource IconBtn}" Width="31" Content="&#xE916;" ToolTip="Timer"/>
+            <Button x:Name="TabTodo" Style="{StaticResource IconBtn}" Width="31" Content="&#xE73A;" ToolTip="To-do"/>
+            <Button x:Name="TabNotif" Style="{StaticResource IconBtn}" Width="31" ToolTip="Notifications">
+              <Grid Width="20" Height="20">
+                <TextBlock Text="&#xE7E7;" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <Ellipse x:Name="NotifBadge" Width="7" Height="7" Fill="#FF453A" HorizontalAlignment="Right" VerticalAlignment="Top" Visibility="Collapsed"/>
+              </Grid>
+            </Button>
+            <Button x:Name="TabClip" Style="{StaticResource IconBtn}" Width="31" Content="&#xE77F;" ToolTip="Clipboard"/>
+            <Button x:Name="TabShelf" Style="{StaticResource IconBtn}" Width="31" Content="&#xE8B7;" ToolTip="File shelf"/>
+            <Button x:Name="TabPrompter" Style="{StaticResource IconBtn}" Width="31" Content="&#xE8A5;" ToolTip="Teleprompter"/>
+            <Button x:Name="TabTidy" Style="{StaticResource IconBtn}" Width="31" Content="&#xE896;" ToolTip="Downloads"/>
+            <Border Width="1" Height="16" Background="#3A3A3C" Margin="4,0" VerticalAlignment="Center"/>
+            <Button x:Name="BtnSearch" Style="{StaticResource IconBtn}" Width="31" Content="&#xE721;" ToolTip="Search"/>
+            <Button x:Name="BtnSettings" Style="{StaticResource IconBtn}" Width="31" Content="&#xE713;" ToolTip="Settings"/>
+          </StackPanel>
+          <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,4,0">
+            <Border x:Name="HeaderTimer" CornerRadius="8" Padding="7,3" Margin="0,0,6,0" Cursor="Hand" Background="#33FF9F0A" Visibility="Collapsed" ToolTip="Open timer">
+              <StackPanel Orientation="Horizontal">
+                <TextBlock x:Name="HeaderTimerIcon" Text="&#xE916;" FontFamily="Segoe MDL2 Assets" FontSize="11" Foreground="#FF9F0A" VerticalAlignment="Center" Margin="0,1,5,0"/>
+                <TextBlock x:Name="HeaderTimerText" FontSize="12" FontWeight="SemiBold" Foreground="#FF9F0A" VerticalAlignment="Center"/>
+              </StackPanel>
+            </Border>
+            <Border x:Name="WeatherBox" Background="Transparent" CornerRadius="8" Padding="6,3" Margin="0,0,8,0" Cursor="Hand" ToolTip="Click to change city">
+              <StackPanel Orientation="Horizontal">
+                <TextBlock x:Name="WeatherIcon" FontFamily="Segoe UI Emoji, Segoe UI Symbol" FontSize="13" VerticalAlignment="Center"/>
+                <TextBlock x:Name="WeatherTemp" FontSize="12" FontWeight="SemiBold" Foreground="White" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                <TextBlock x:Name="WeatherInfo" FontSize="12" Foreground="#8E8E93" VerticalAlignment="Center" Margin="6,0,0,0"/>
+              </StackPanel>
+            </Border>
+            <Border x:Name="CityEditBox" Background="#1C1C1E" CornerRadius="8" Margin="0,0,8,0" Visibility="Collapsed">
+              <Grid>
+                <TextBox x:Name="CityEdit" Width="170" Background="Transparent" Foreground="White" CaretBrush="White" BorderThickness="0" Padding="8,4" FontSize="12"/>
+                <TextBlock x:Name="CityPlaceholder" Text="City, then Enter (blank = auto)" Foreground="#636366" FontSize="12" Margin="10,0,0,0" VerticalAlignment="Center" IsHitTestVisible="False"/>
+              </Grid>
+            </Border>
+            <TextBlock x:Name="ClockText" Foreground="#8E8E93" FontSize="12" VerticalAlignment="Center" Margin="0,0,12,0"/>
+            <StackPanel x:Name="BatteryBox" Orientation="Horizontal" VerticalAlignment="Center">
+              <TextBlock x:Name="BatteryText" Foreground="#E5E5EA" FontSize="12" VerticalAlignment="Center" Margin="0,0,6,0"/>
+              <Grid Width="25" Height="12" VerticalAlignment="Center">
+                <Border BorderBrush="#8E8E93" BorderThickness="1.2" CornerRadius="3" Width="22" HorizontalAlignment="Left"/>
+                <Border x:Name="BatteryFill" Background="White" CornerRadius="1.5" Height="7" Width="10" HorizontalAlignment="Left" Margin="2.2,0,0,0"/>
+                <Border Background="#8E8E93" Width="2" Height="5" CornerRadius="1" HorizontalAlignment="Right"/>
+              </Grid>
+              <TextBlock x:Name="ChargeIcon" Text="&#xE945;" FontFamily="Segoe MDL2 Assets" FontSize="11" Foreground="#30D158" VerticalAlignment="Center" Margin="3,0,0,0" Visibility="Collapsed"/>
+            </StackPanel>
+          </StackPanel>
+
+          <Grid Grid.Row="1" Margin="4,8,4,0">
+
+            <!-- Now Playing -->
+            <Grid x:Name="PanelMedia">
+              <Grid.ColumnDefinitions><ColumnDefinition Width="150"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+              <Border Width="150" Height="150" CornerRadius="16" Background="#1C1C1E" VerticalAlignment="Top">
+                <Grid>
+                  <TextBlock x:Name="ArtPlaceholder" Text="&#xE8D6;" FontFamily="Segoe MDL2 Assets" FontSize="44" Foreground="#48484A" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                  <Border x:Name="ArtImg" CornerRadius="16"/>
+                </Grid>
+              </Border>
+              <Grid Grid.Column="1" Margin="18,2,0,0">
+                <Grid.RowDefinitions>
+                  <RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/>
+                  <RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <TextBlock x:Name="MediaTitle" Text="Nothing playing" FontSize="17" FontWeight="SemiBold" Foreground="White" TextTrimming="CharacterEllipsis"/>
+                <TextBlock x:Name="MediaArtist" Grid.Row="1" Text="Play something in Spotify, YouTube or any media app" FontSize="13" Foreground="#8E8E93" TextTrimming="CharacterEllipsis" Margin="0,2,0,0"/>
+                <TextBlock x:Name="MediaApp" Grid.Row="2" FontSize="11" Foreground="#636366" Margin="0,3,0,0"/>
+                <Grid x:Name="LyricsView" Grid.RowSpan="4" Background="Black" Visibility="Collapsed" ClipToBounds="True" Margin="0,0,0,6">
+                  <StackPanel VerticalAlignment="Center">
+                    <TextBlock x:Name="LyricPrev" FontSize="13" Foreground="#636366" TextTrimming="CharacterEllipsis"/>
+                    <TextBlock x:Name="LyricCur" FontSize="17" FontWeight="SemiBold" Foreground="White" TextWrapping="Wrap" MaxHeight="46" TextTrimming="CharacterEllipsis" Margin="0,4,0,4"/>
+                    <TextBlock x:Name="LyricNext" FontSize="13" Foreground="#8E8E93" TextTrimming="CharacterEllipsis"/>
+                  </StackPanel>
+                </Grid>
+                <Grid x:Name="ProgTrack" Grid.Row="4" Width="420" Height="14" HorizontalAlignment="Left" Background="Transparent" Cursor="Hand">
+                  <Border Height="4" Background="#3A3A3C" CornerRadius="2"/>
+                  <Border x:Name="ProgFill" Height="4" Width="0" Background="White" CornerRadius="2" HorizontalAlignment="Left"/>
+                </Grid>
+                <Grid Grid.Row="5" Width="420" HorizontalAlignment="Left">
+                  <TextBlock x:Name="PosText" FontSize="11" Foreground="#8E8E93"/>
+                  <TextBlock x:Name="DurText" FontSize="11" Foreground="#8E8E93" HorizontalAlignment="Right"/>
+                </Grid>
+                <Grid Grid.Row="6" Width="420" HorizontalAlignment="Left" Margin="0,4,0,0">
+                  <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                    <Button x:Name="BtnPrev" Style="{StaticResource IconBtn}" Content="&#xE892;" FontSize="16" Width="40" Height="36"/>
+                    <Button x:Name="BtnPlay" Style="{StaticResource IconBtn}" Content="&#xE768;" FontSize="20" Width="44" Height="36"/>
+                    <Button x:Name="BtnNext" Style="{StaticResource IconBtn}" Content="&#xE893;" FontSize="16" Width="40" Height="36"/>
+                    <Button x:Name="BtnLyrics" Style="{StaticResource PillBtn}" Content="Lyrics" Padding="11,4" Margin="10,0,0,0" VerticalAlignment="Center" ToolTip="Show synced lyrics"/>
+                  </StackPanel>
+                  <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <TextBlock x:Name="VolIcon" Text="&#xE767;" FontFamily="Segoe MDL2 Assets" FontSize="14" Foreground="#8E8E93" VerticalAlignment="Center" Margin="0,0,8,0" Background="Transparent"/>
+                    <Grid x:Name="VolTrack" Width="110" Height="16" Background="Transparent" Cursor="Hand">
+                      <Border Height="4" Background="#3A3A3C" CornerRadius="2"/>
+                      <Border x:Name="VolFill" Height="4" Width="0" Background="White" CornerRadius="2" HorizontalAlignment="Left"/>
+                    </Grid>
+                  </StackPanel>
+                </Grid>
+              </Grid>
+            </Grid>
+
+            <!-- Timer -->
+            <Grid x:Name="PanelTimer" Visibility="Collapsed">
+              <Grid.ColumnDefinitions><ColumnDefinition Width="170"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+              <Grid Width="150" Height="150" HorizontalAlignment="Left" VerticalAlignment="Top">
+                <Ellipse Stroke="#2C2C2E" StrokeThickness="10"/>
+                <Path x:Name="TimerArc" Stroke="#FF9F0A" StrokeThickness="10" StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                  <TextBlock x:Name="TimerBig" Text="25:00" FontSize="30" FontWeight="SemiBold" Foreground="White" HorizontalAlignment="Center" FontFamily="Segoe UI Variable Display, Segoe UI"/>
+                  <TextBlock x:Name="TimerMode" Text="FOCUS" FontSize="11" FontWeight="SemiBold" Foreground="#FF9F0A" HorizontalAlignment="Center"/>
+                </StackPanel>
+              </Grid>
+              <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                <TextBlock Text="Pomodoro" FontSize="17" FontWeight="SemiBold" Foreground="White"/>
+                <TextBlock x:Name="TimerSub" Text="Pick a session and get in the zone." Foreground="#8E8E93" FontSize="12" Margin="0,2,0,12"/>
+                <WrapPanel>
+                  <Button x:Name="PresetFocus" Style="{StaticResource PillBtn}" Content="Focus 25"/>
+                  <Button x:Name="PresetShort" Style="{StaticResource PillBtn}" Content="Break 5"/>
+                  <Button x:Name="PresetLong" Style="{StaticResource PillBtn}" Content="Long break 15"/>
+                  <Button x:Name="TimerMinus" Style="{StaticResource PillBtn}" Content="&#x2212;1 min"/>
+                  <Button x:Name="TimerPlus" Style="{StaticResource PillBtn}" Content="+1 min"/>
+                </WrapPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                  <Button x:Name="TimerStart" Style="{StaticResource PillBtn}" Background="#FF9F0A" Foreground="Black" FontWeight="SemiBold" Padding="20,6" Content="Start"/>
+                  <Button x:Name="TimerReset" Style="{StaticResource PillBtn}" Padding="16,6" Content="Reset"/>
+                </StackPanel>
+              </StackPanel>
+            </Grid>
+
+            <!-- To-do -->
+            <Grid x:Name="PanelTodo" Visibility="Collapsed">
+              <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+              <DockPanel>
+                <Button x:Name="TodoClearDone" DockPanel.Dock="Right" Style="{StaticResource PillBtn}" Margin="0" Padding="10,3" Content="Clear done"/>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                  <TextBlock Text="To-do" FontSize="15" FontWeight="SemiBold" Foreground="White"/>
+                  <TextBlock x:Name="TodoCount" FontSize="12" Foreground="#8E8E93" VerticalAlignment="Center" Margin="8,0,0,0"/>
+                </StackPanel>
+              </DockPanel>
+              <Border Grid.Row="1" Background="#1C1C1E" CornerRadius="9" Margin="0,8,0,6">
+                <Grid>
+                  <TextBox x:Name="TodoInput" Background="Transparent" Foreground="White" CaretBrush="White" BorderThickness="0" Padding="10,7" FontSize="13"/>
+                  <TextBlock x:Name="TodoPlaceholder" Text="Add a task and press Enter" Foreground="#636366" FontSize="13" Margin="12,0,0,0" VerticalAlignment="Center" IsHitTestVisible="False"/>
+                </Grid>
+              </Border>
+              <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Hidden">
+                <StackPanel x:Name="TodoList"/>
+              </ScrollViewer>
+              <TextBlock x:Name="TodoEmpty" Grid.Row="2" Text="Nothing to do. Nice!" Foreground="#636366" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Grid>
+
+            <!-- Notifications -->
+            <Grid x:Name="PanelNotif" Visibility="Collapsed">
+              <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+              <DockPanel>
+                <Button x:Name="NotifClear" DockPanel.Dock="Right" Style="{StaticResource PillBtn}" Margin="0" Padding="10,3" Content="Clear"/>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                  <TextBlock Text="Notifications" FontSize="15" FontWeight="SemiBold" Foreground="White"/>
+                  <TextBlock x:Name="NotifCount" FontSize="12" Foreground="#8E8E93" VerticalAlignment="Center" Margin="8,0,0,0"/>
+                </StackPanel>
+              </DockPanel>
+              <ScrollViewer Grid.Row="1" Margin="0,8,0,0" VerticalScrollBarVisibility="Hidden">
+                <StackPanel x:Name="NotifList"/>
+              </ScrollViewer>
+              <StackPanel x:Name="NotifEmpty" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock Text="&#xE7E7;" FontFamily="Segoe MDL2 Assets" FontSize="24" Foreground="#48484A" HorizontalAlignment="Center"/>
+                <TextBlock Text="No notifications yet" FontSize="13" Foreground="#8E8E93" Margin="0,8,0,0" HorizontalAlignment="Center"/>
+                <TextBlock x:Name="NotifEmptyStatus" FontSize="11" Foreground="#636366" Margin="0,3,0,0" HorizontalAlignment="Center"/>
+              </StackPanel>
+            </Grid>
+
+            <!-- Clipboard -->
+            <Grid x:Name="PanelClip" Visibility="Collapsed">
+              <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+              <DockPanel>
+                <Button x:Name="ClipClear" DockPanel.Dock="Right" Style="{StaticResource PillBtn}" Margin="0" Padding="10,3" Content="Clear"/>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                  <TextBlock Text="Clipboard" FontSize="15" FontWeight="SemiBold" Foreground="White"/>
+                  <TextBlock x:Name="ClipHint" Text="  click to copy again · right-click to remove" FontSize="12" Foreground="#8E8E93" VerticalAlignment="Center"/>
+                </StackPanel>
+              </DockPanel>
+              <ScrollViewer Grid.Row="1" Margin="0,8,0,0" VerticalScrollBarVisibility="Hidden">
+                <StackPanel x:Name="ClipList"/>
+              </ScrollViewer>
+              <TextBlock x:Name="ClipEmpty" Grid.Row="1" Text="Copy some text and it'll show up here." Foreground="#636366" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Grid>
+
+            <!-- Shelf -->
+            <Grid x:Name="PanelShelf" Visibility="Collapsed">
+              <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+              <DockPanel>
+                <Button x:Name="ShelfClear" DockPanel.Dock="Right" Style="{StaticResource PillBtn}" Margin="0" Padding="10,3" Content="Clear"/>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                  <TextBlock Text="Shelf" FontSize="15" FontWeight="SemiBold" Foreground="White"/>
+                  <TextBlock Text="  drag files in, drag them out · double-click opens · right-click removes" FontSize="12" Foreground="#8E8E93" VerticalAlignment="Center"/>
+                </StackPanel>
+              </DockPanel>
+              <Grid Grid.Row="1" Margin="0,8,0,0">
+                <Rectangle x:Name="ShelfOutline" RadiusX="14" RadiusY="14" Stroke="#48484A" StrokeThickness="1.5" StrokeDashArray="4 3" Fill="#0AFFFFFF"/>
+                <ScrollViewer x:Name="ShelfScroll" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Disabled" Margin="6">
+                  <StackPanel x:Name="ShelfList" Orientation="Horizontal"/>
+                </ScrollViewer>
+                <StackPanel x:Name="ShelfEmpty" HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False">
+                  <TextBlock Text="&#xE896;" FontFamily="Segoe MDL2 Assets" FontSize="26" Foreground="#636366" HorizontalAlignment="Center"/>
+                  <TextBlock Text="Drop files here" FontSize="13" Foreground="#8E8E93" Margin="0,6,0,0" HorizontalAlignment="Center"/>
+                </StackPanel>
+              </Grid>
+            </Grid>
+
+            <!-- Downloads / auto-tidy -->
+            <Grid x:Name="PanelTidy" Visibility="Collapsed">
+              <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+              <DockPanel>
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                  <TextBlock Text="Auto-tidy" FontSize="12" Foreground="#E5E5EA" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                  <Border x:Name="TidyToggle" Width="40" Height="22" CornerRadius="11" Background="#3A3A3C" Cursor="Hand" ToolTip="Sort new downloads into folders automatically">
+                    <Ellipse x:Name="TidyKnob" Width="18" Height="18" Fill="White" HorizontalAlignment="Left" Margin="2,0,0,0">
+                      <Ellipse.RenderTransform><TranslateTransform x:Name="TidyKnobShift"/></Ellipse.RenderTransform>
+                    </Ellipse>
+                  </Border>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                  <TextBlock Text="Downloads" FontSize="15" FontWeight="SemiBold" Foreground="White"/>
+                  <TextBlock x:Name="TidyStatus" FontSize="12" Foreground="#8E8E93" VerticalAlignment="Center" Margin="8,0,0,0"/>
+                </StackPanel>
+              </DockPanel>
+              <WrapPanel x:Name="TidyChips" Grid.Row="1" Margin="0,12,0,0"/>
+              <StackPanel Grid.Row="2" Orientation="Horizontal">
+                <Button x:Name="TidyNowBtn" Style="{StaticResource PillBtn}" Background="#0A84FF" FontWeight="SemiBold" Padding="16,6" Content="Tidy now"/>
+                <Button x:Name="TidyUndoBtn" Style="{StaticResource PillBtn}" Padding="14,6" Content="Undo last tidy"/>
+                <Button x:Name="TidyOpenBtn" Style="{StaticResource PillBtn}" Padding="14,6" Content="Open Downloads"/>
+              </StackPanel>
+            </Grid>
+
+            <!-- Teleprompter -->
+            <Grid x:Name="PanelPrompter" Visibility="Collapsed">
+              <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+              <DockPanel>
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                  <TextBlock Text="Speed" FontSize="12" Foreground="#8E8E93" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                  <Grid x:Name="SpeedTrack" Width="90" Height="16" Background="Transparent" Cursor="Hand" VerticalAlignment="Center" Margin="0,0,8,0">
+                    <Border Height="4" Background="#3A3A3C" CornerRadius="2"/>
+                    <Border x:Name="SpeedFill" Height="4" Width="30" Background="White" CornerRadius="2" HorizontalAlignment="Left"/>
+                  </Grid>
+                  <Button x:Name="PromptReset" Style="{StaticResource IconBtn}" Content="&#xE72C;" ToolTip="Back to start"/>
+                  <Button x:Name="PromptEditBtn" Style="{StaticResource IconBtn}" Content="&#xE70F;" ToolTip="Edit script"/>
+                  <Button x:Name="PromptPlay" Style="{StaticResource IconBtn}" Content="&#xE768;" ToolTip="Play / pause"/>
+                </StackPanel>
+                <TextBlock Text="Teleprompter" FontSize="15" FontWeight="SemiBold" Foreground="White" VerticalAlignment="Center"/>
+              </DockPanel>
+              <Grid Grid.Row="1" Margin="0,6,0,0">
+                <Canvas x:Name="PromptCanvas" ClipToBounds="True" Background="Transparent">
+                  <TextBlock x:Name="PromptText" Width="610" TextWrapping="Wrap" FontSize="21" FontWeight="SemiBold" Foreground="White" TextAlignment="Center" LineHeight="30" Canvas.Top="16"/>
+                </Canvas>
+                <Rectangle Height="22" VerticalAlignment="Top" IsHitTestVisible="False">
+                  <Rectangle.Fill><LinearGradientBrush StartPoint="0,0" EndPoint="0,1"><GradientStop Color="#FF000000" Offset="0"/><GradientStop Color="#00000000" Offset="1"/></LinearGradientBrush></Rectangle.Fill>
+                </Rectangle>
+                <Rectangle Height="22" VerticalAlignment="Bottom" IsHitTestVisible="False">
+                  <Rectangle.Fill><LinearGradientBrush StartPoint="0,0" EndPoint="0,1"><GradientStop Color="#00000000" Offset="0"/><GradientStop Color="#FF000000" Offset="1"/></LinearGradientBrush></Rectangle.Fill>
+                </Rectangle>
+                <TextBox x:Name="PromptEdit" Visibility="Collapsed" AcceptsReturn="True" TextWrapping="Wrap" Background="#1C1C1E" Foreground="White"
+                         CaretBrush="White" BorderThickness="0" Padding="10" FontSize="14" VerticalScrollBarVisibility="Hidden" SelectionBrush="#0A84FF"/>
+              </Grid>
+            </Grid>
+
+          </Grid>
+        </Grid>
+      </Grid>
+    </Border>
+  </Grid>
+</Window>
